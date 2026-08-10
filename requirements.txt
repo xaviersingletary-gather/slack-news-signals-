@@ -1,0 +1,3 @@
+pyyaml>=6.0
+certifi
+psycopg[binary]>=3.1

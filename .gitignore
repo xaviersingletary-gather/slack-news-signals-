@@ -1,0 +1,4 @@
+.env
+state.db
+__pycache__/
+.railway/

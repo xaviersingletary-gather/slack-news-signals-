@@ -1,0 +1,111 @@
+# Signal Ping — config
+# gather_brief seeded from gather.ai on 2026-08-05. Xavier red-pens before first live run.
+
+channel_id: C0BLK715N31        # #account-signals (flip to test channel for first live post)
+lookback_days: 14              # rolling window; stories older than this never post
+llm_filter: false              # needs OPENROUTER_API_KEY in .env when true
+max_stories: 15                # Block Kit 50-block cap safety
+listener_url: ""               # https://<listener service>.up.railway.app — set after listener deploys (heartbeat checks /healthz daily)
+admin_slack_user: ""           # U… ID for ops alerts; falls back to channel_id when empty
+
+# ---------------------------------------------------------------------------
+# Ground truth for every why-line and outreach angle. The LLM is pinned to
+# this block + the story text only. If an angle references something not in
+# here or in the story, that's a bug — flag it in dry-run review.
+# ---------------------------------------------------------------------------
+gather_brief:
+  positioning: >
+    Physical AI for logistics — dock-to-dock intelligence across every facility
+    in a network. One platform (Prana): drones capture what's sitting still,
+    cameras on forklifts capture what moves; computer vision turns that into
+    ground truth. Sage (AI) reasons over it — root cause across inventory,
+    labor, fulfillment — and shows its reasoning. Workflows route the fix to
+    the right person, tracked to close.
+  icp: multi-facility warehouse/DC networks — manufacturing, food & beverage, healthcare, 3PL
+  buyer_roles:                       # mirrors Sarah's persona buckets (gtm-homebase contacts.json, 40.8K contacts)
+    - VP / Director of Supply Chain, Logistics   # 'Supply Chain' bucket (VP SC, VP Logistics, Sr Dir SC)
+    - VP / Director of Operations, Warehouse Operations  # 'Ops/Distribution' bucket
+    - COO                                          # exec sponsor bucket
+    - DC General Manager / Warehouse Manager       # site-level 'DC/Warehouse GM-Mgr' bucket
+    - Inventory Control / Supply Planning lead     # 'Inventory Control' bucket
+    # CFO bucket exists in list data — treat as budget voice on cost-out stories, not a DM target
+  pains_we_solve:
+    - decisions made on stale inventory records between counts
+    - manual counting labor burn (Geodis ran 4,400 hrs/yr before Gather)
+    - every facility running to its own standard; fixes that don't replicate across the network
+    - AI / planning programs starved of current, accurate floor data
+  proof_points:                      # all public on gather.ai — do not add to this list without Xavier
+    - "Barrett Distribution Centers: 99.9% inventory accuracy, shelf to record, down to the case"
+    - "Geodis: manual counting cut from 4,400 to 800 hours/year"
+    - "NFI: 5x operational productivity, playbook replicated across the network"
+  say: [ground truth, dock-to-dock, physical AI, every facility to the same standard]
+  never_say:
+    - metrics or customer names outside proof_points
+    - personal names not in the story
+    - "'AI-powered' and similar filler"
+    - revops-flavored framing
+  regions: [USA]                 # US-only. stories with non-US geo markers = dropped (see non_us_geo)
+  angle_rule: >
+    An angle must connect the story to a listed pain. No intersection =
+    return "no angle" — never force one. Stories outside regions = skip.
+
+# geography: US-only news. Title carrying a non-US place (case-sensitive) or a
+# non-US currency symbol is dropped. Asymmetric on purpose: US stories rarely
+# say "US", so absence of a foreign marker = pass. Tune the list as needed.
+us_only: true
+non_us_geo:
+  places: [Chile, Pakistan, Punjab, Ireland, Irish, Limerick, Askeaton, Hungary,
+    Thailand, Dubai, UAE, India, China, Egypt, Brazil, Nigeria, Wales, Gorseinon,
+    Swansea, Trinidad, Tobago, UK, Britain, England, Scotland, London, Europe,
+    Germany, France, Spain, Italy, Mexico, Canada, Japan, "South Korea", Korea,
+    Australia, Singapore, Malaysia, Indonesia, Vietnam, Philippines, Bangladesh,
+    Turkey, Poland, Netherlands, Belgium, Switzerland, Austria, Sweden, Norway,
+    Denmark, Finland, Portugal, Greece, Czech, Romania, Russia, Ukraine, Israel,
+    Saudi, Qatar, Kuwait, Kenya, Ghana, "South Africa", Argentina, Colombia,
+    Peru, Venezuela, Panama, "Costa Rica", Guatemala, Jamaica, Caribbean,
+    Morocco, Algeria, Tunisia, Araçatuba, "Samut Prakan", "Middle East"]
+  currencies: ["£", "€", "₹", "₦", "₺", "₽", "R$", "C$", "A$", "Mex$", "AED", "CHF", "zł"]
+
+# ---------------------------------------------------------------------------
+accounts:
+  - name: 3M
+    aliases: ["3M", "3M Company"]    # case-sensitive match; currency-prefix rule on
+    block_terms: ["3m open", "golf", "pga", "tee time"]   # annual golf tournament floods the feed
+    query_sc: 'supply chain OR warehouse OR distribution OR logistics OR automation OR "distribution center"'
+    query_exec: 'restructuring OR spin-off OR expansion OR appoints OR names OR chief OR plant OR factory OR closes OR opens OR layoffs'
+  - name: Procter & Gamble
+    aliases: ["Procter & Gamble", "Procter and Gamble", "P&G"]
+    query_sc: 'supply chain OR warehouse OR distribution OR logistics OR automation OR "distribution center" OR fulfillment OR manufacturing'
+    query_exec: 'restructuring OR spin-off OR expansion OR appoints OR names OR chief OR plant OR factory OR closes OR opens OR layoffs OR tariff OR "supply chain officer"'
+  - name: Nestlé
+    aliases: ["Nestlé", "Nestle"]
+    query_sc: 'supply chain OR warehouse OR distribution OR logistics OR automation OR "distribution center" OR fulfillment OR manufacturing'
+    query_exec: 'restructuring OR spin-off OR expansion OR appoints OR names OR chief OR plant OR factory OR closes OR opens OR layoffs OR tariff OR "supply chain officer"'
+  - name: MilliporeSigma
+    aliases: ["MilliporeSigma", "Millipore Sigma", "Millipore-Sigma"]
+    query_sc: 'supply chain OR warehouse OR distribution OR logistics OR automation OR "distribution center" OR fulfillment OR manufacturing'
+    query_exec: 'restructuring OR spin-off OR expansion OR appoints OR names OR chief OR plant OR factory OR closes OR opens OR layoffs OR tariff OR "supply chain officer"'
+  - name: FedEx
+    aliases: ["FedEx", "Federal Express"]
+    query_sc: 'supply chain OR warehouse OR distribution OR logistics OR automation OR "distribution center" OR fulfillment OR manufacturing'
+    query_exec: 'restructuring OR spin-off OR expansion OR appoints OR names OR chief OR plant OR factory OR closes OR opens OR layoffs OR tariff OR "supply chain officer"'
+  - name: CEVA Logistics
+    aliases: ["CEVA Logistics", "CEVA"]    # bare CEVA also = chip IP co; SC gate drops those
+    query_sc: 'supply chain OR warehouse OR distribution OR logistics OR automation OR "distribution center" OR fulfillment OR manufacturing'
+    query_exec: 'restructuring OR spin-off OR expansion OR appoints OR names OR chief OR plant OR factory OR closes OR opens OR layoffs OR tariff OR "supply chain officer"'
+
+# global title blocklist — soft PR / event spam that survives keyword relevance
+block_terms: [scholarship, charity, foundation, donation, contest, giveaway]
+
+source_blacklist:
+  - simplywall.st
+  - TradingView
+  - scanx.trade
+  - IndexBox
+  - The Motley Fool
+  - StockInvest.us
+  - MarketBeat
+  - Barchart.com
+  - Zacks
+  - GuruFocus
+  - Insider Monkey
