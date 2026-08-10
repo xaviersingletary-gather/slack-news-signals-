@@ -1,8 +1,10 @@
-# Railway — DEFAULT config. Applies to the signal-ping-listener web service
-# (no config path set = this file). The worker uses railway.worker.toml.
+# Railway — single config for both services. scripts/entry.py dispatches on
+# SERVICE_ROLE (set per service as a variable). The worker's cron schedule is a
+# service setting (Cron Schedule = 0 11 * * * UTC), NOT in this file, so the
+# listener can share the config without inheriting a schedule.
 [build]
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "python3 listener.py"
+startCommand = "python3 scripts/entry.py"
 restartPolicyType = "ON_FAILURE"
