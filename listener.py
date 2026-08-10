@@ -216,15 +216,19 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             self._reply(400, "bad json")
             return
+        ptype = payload.get("type", "?")
         # url_verification is answered unverified — it's a harmless echo, and this
         # lets Slack's handshake succeed before SLACK_SIGNING_SECRET is configured.
-        if payload.get("type") == "url_verification":
+        if ptype == "url_verification":
             self._reply(200, payload.get("challenge", ""), ctype="text/plain")
             return
         if not verify_signature(body, self.headers.get("X-Slack-Request-Timestamp", ""),
                                 self.headers.get("X-Slack-Signature", "")):
+            print(f"REJECTED 401: type={ptype} (signature mismatch or stale ts)")
             self._reply(401, "bad signature")
             return
+        print(f"event: type={ptype} event={payload.get('event', {}).get('type')} "
+              f"channel_type={payload.get('event', {}).get('channel_type')}")
         # dedupe retries
         eid = payload.get("event_id", "")
         if eid:
