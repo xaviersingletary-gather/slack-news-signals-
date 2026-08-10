@@ -1,0 +1,10 @@
+# Railway — signal-ping digest worker (cron service).
+# Service → Settings → Config file path = railway.worker.toml
+# NOTE: cron is UTC. 11:00 UTC = 7:00 AM ET (EDT) / 8:00 AM ET (EST).
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "python3 scripts/seed_state.py && python3 ping.py"
+cronSchedule = "0 11 * * *"
+restartPolicyType = "NEVER"

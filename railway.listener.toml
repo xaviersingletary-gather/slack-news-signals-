@@ -1,8 +1,0 @@
-# Railway — signal-ping events listener (web service)
-# Set this as the service's config path: Service → Settings → Config file = railway.listener.toml
-[build]
-builder = "NIXPACKS"
-
-[deploy]
-startCommand = "python3 listener.py"
-restartPolicyType = "ON_FAILURE"
