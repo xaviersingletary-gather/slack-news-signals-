@@ -5,7 +5,7 @@ channel_id: C0BLK715N31        # #account-signals (flip to test channel for firs
 lookback_days: 14              # rolling window; stories older than this never post
 llm_filter: false              # needs OPENROUTER_API_KEY in .env when true
 max_stories: 15                # Block Kit 50-block cap safety
-listener_url: ""               # https://<listener service>.up.railway.app — set after listener deploys (heartbeat checks /healthz daily)
+listener_url: "https://signal-ping-listener-production.up.railway.app"   # heartbeat checks /healthz daily
 admin_slack_user: ""           # U… ID for ops alerts; falls back to channel_id when empty
 
 # ---------------------------------------------------------------------------
