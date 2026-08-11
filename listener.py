@@ -241,7 +241,10 @@ class Handler(BaseHTTPRequestHandler):
                 _SEEN_IDS.discard(_SEEN_ORDER.pop(0))
         ev = payload.get("event", {})
         if payload.get("type") == "event_callback" and ev.get("type") == "message":
-            _EVENTS.put(ev)
+            if ev.get("channel_type") == "im":
+                _EVENTS.put(ev)
+            else:
+                print("ignored: channel message (DM the bot instead)")
         self._reply(200, "ok")
 
     def _reply(self, code: int, text: str, ctype: str = "text/plain"):
