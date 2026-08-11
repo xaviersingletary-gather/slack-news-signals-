@@ -220,6 +220,7 @@ class Handler(BaseHTTPRequestHandler):
         # url_verification is answered unverified — it's a harmless echo, and this
         # lets Slack's handshake succeed before SLACK_SIGNING_SECRET is configured.
         if ptype == "url_verification":
+            print("handshake: url_verification answered")
             self._reply(200, payload.get("challenge", ""), ctype="text/plain")
             return
         if not verify_signature(body, self.headers.get("X-Slack-Request-Timestamp", ""),
